@@ -10,8 +10,12 @@ const spotify = new SpotifyWebApi();
 
 function App() {
   // Like a Temporary storage in react
-  const [token, setToken] = useState();
-  const [{ user }, dispatch] = useDataLayerValue();
+  // const [token, setToken] = useState(); // previouse code
+
+  // Have to refactor it to use the reducer dispatch method
+
+
+  const [{ user, token }, dispatch] = useDataLayerValue();
 
 
   // Run a code based on a given condition
@@ -23,7 +27,12 @@ function App() {
     const _token = hash.access_token;
 
     if (_token) {
-      setToken(_token);
+      // setToken(_token);  // previouse code
+
+      dispatch({
+        type: "SET_TOKEN",
+        token: _token,
+      })
 
       spotify.setAccessToken(_token);
 
@@ -36,17 +45,18 @@ function App() {
       });
     }
 
-    console.log('i have a token >>', token);
+    // console.log('i have a token >>', token);
   }, []); // Run once after the value inside square bracket changes can add as many values inside it
 
-  console.log("user >>", user);
+  // console.log("user >>", user);
+  // console.log("token >>", token);
 
   return (
     // BEM convention for CSS
     <div className="App">
       {
         token ? (
-          <Player />
+          <Player spotify={spotify} />
         ) : (
           <Login />
         )
