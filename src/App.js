@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Login from './Login';
-import { getTokenFromUrl } from './spotify';
-import SpotifyWebApi from 'spotify-web-api-js';
-import Player from './Player';
-import { useDataLayerValue } from './DataLayer';
+import React, { useEffect, useState } from "react";
+import Login from "./Login";
+import { getTokenFromUrl } from "./spotify";
+import SpotifyWebApi from "spotify-web-api-js";
+import Player from "./Player";
+import { useDataLayerValue } from "./DataLayer";
 
 const spotify = new SpotifyWebApi();
 
@@ -13,9 +13,7 @@ function App() {
 
   // Have to refactor it to use the reducer dispatch method
 
-
   const [{ user, token }, dispatch] = useDataLayerValue();
-
 
   // Run a code based on a given condition
   useEffect(() => {
@@ -31,15 +29,15 @@ function App() {
       dispatch({
         type: "SET_TOKEN",
         token: _token,
-      })
+      });
 
       spotify.setAccessToken(_token);
 
       spotify.getMe().then((user) => {
         // console.log('Person >>', user);
         dispatch({
-          type: 'SET_USER',
-          user: user
+          type: "SET_USER",
+          user: user,
         });
       });
 
@@ -49,6 +47,13 @@ function App() {
           playlists: playlists,
         });
       });
+
+      spotify.getPlaylist("here will come the playlist id").then((response) =>
+        dispatch({
+          type: "SET_DISCOVER_WEEKLY",
+          discover_weekly: response,
+        })
+      );
     }
 
     // console.log('i have a token >>', token);
@@ -60,15 +65,7 @@ function App() {
   return (
     // BEM convention for CSS
     <div className="App">
-      {
-        token ? (
-          <Player spotify={spotify} />
-        ) : (
-          <Login />
-        )
-      }
-
-
+      {token ? <Player spotify={spotify} /> : <Login />}
     </div>
   );
 }
